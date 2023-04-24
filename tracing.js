@@ -9,9 +9,20 @@ const { ExpressInstrumentation } = require("@opentelemetry/instrumentation-expre
 const { MongoDBInstrumentation } = require("@opentelemetry/instrumentation-mongodb");
 const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
 const { registerInstrumentations } = require("@opentelemetry/instrumentation");
+const { JaegerExporter } = require("@opentelemetry/exporter-jaeger"); //modified 
 //Exporter
 module.exports = (serviceName) => {
-    const exporter = new ConsoleSpanExporter();
+    //const exporter = new ConsoleSpanExporter(); //orginal instructions
+    // const options = {
+    //     tags: [], // optional
+    //     // You can use the default UDPSender
+    //     host: 'localhost', // optional
+    //     port: 6832, // optional
+    //     // OR you can use the HTTPSender as follows
+    //     // endpoint: 'http://localhost:14268/api/traces',
+    //     maxPacketSize: 65000 // optional
+    //   }
+    const exporter = new JaegerExporter();
     const provider = new NodeTracerProvider({
         resource: new Resource({
             [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
@@ -29,3 +40,12 @@ module.exports = (serviceName) => {
     });
     return trace.getTracer(serviceName);
 }
+const options = {
+    tags: [], // optional
+    // You can use the default UDPSender
+    host: 'localhost', // optional
+    port: 6832, // optional
+    // OR you can use the HTTPSender as follows
+    // endpoint: 'http://localhost:14268/api/traces',
+    maxPacketSize: 65000 // optional
+  }
